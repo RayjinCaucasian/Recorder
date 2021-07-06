@@ -12,27 +12,24 @@
 <body>
     <div id="file-manager">
         <ul>
-            <li>hello</li>
-            <li>hello</li>
-            <li>hello</li>
-            <li>hello</li>
-            <li>hello</li>
-            <li>hello</li>
-            <li>hello</li>
-            <li>hello</li>
-            <li>hello</li>
-            <li>hello</li>
-            <li>hello</li>
-            <li>hello</li>
+            <li>Audio File</li>
+            <li>Audio File</li>
         </ul>
     </div>
-    <div id="waveforms" style="background-image: url('FFT-Time-Frequency-View-540.png'); background-size: cover; background-position: center; overflow: hidden;">
+    <canvas id="waveforms"></canvas>
     </div>
-    <div id="controls"> 
-        <button id="roecord-stop-btn">Record</button>
-        <button id=play-pause-btn>Play/Pause</button>
-        <span id="timer">00:00 / 00:00</span>
-        <input type="range" value="0" id="time-scroll">
+    <div id="control-bar">
+        <div id="controls">
+            <button id="record-stop-btn">Record</button>
+            <button id=play-pause-btn>Play/Pause</button>
+        </div>
+        <div id="timer">
+            <output id="time" for="time-scroll">00:00 / 00:00</output>
+            <span>
+                <input id="timer-scroll" type="range" value="0" >
+            </span>
+            
+        </div>
     </div>
 </body>
     <script src="main.js"></script>
