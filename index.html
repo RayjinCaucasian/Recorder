@@ -10,27 +10,42 @@
 </head>
 
 <body>
-    <div id="file-manager">
-        <ul>
-            <li>Audio File</li>
-            <li>Audio File</li>
-        </ul>
-    </div>
-    <canvas id="waveforms"></canvas>
-    </div>
-    <div id="control-bar">
-        <div id="controls">
-            <button id="record-stop-btn">Record</button>
-            <button id=play-pause-btn>Play/Pause</button>
+        <div class="file-container">
+            <ul id="file-list">
+                <li class="file">
+                    <div class="file-details" onclick="selectFile(this.parentNode)">hello</div>
+                    <button class="delete-btn" onclick="removeFile(this.parentNode)">x</button>                  
+                </li>
+                <li class="file">
+                    <div class="file-details" onclick="selectFile(this.parentNode)">hello</div>
+                    <button class="delete-btn" onclick="removeFile(this.parentNode)">x</button>                  
+                </li>
+                <li class="file">
+                    <div class="file-details" onclick="selectFile(this.parentNode)">hello</div>
+                    <button class="delete-btn" onclick="removeFile(this.parentNode)">x</button>                  
+                </li>
+                <li class="file">
+                    <div class="file-details" onclick="selectFile(this.parentNode)">hello</div>
+                    <button class="delete-btn" onclick="removeFile(this.parentNode)">x</button>                  
+                </li>
+            </ul>
         </div>
-        <div id="timer">
-            <output id="time" for="time-scroll">00:00 / 00:00</output>
-            <span>
-                <input id="timer-scroll" type="range" value="0" >
-            </span>
-            
+        <div id="waveforms">
+            <canvas></canvas>
+            <canvas></canvas>
+            <canvas></canvas>
+            <canvas></canvas>
         </div>
-    </div>
+        <div id="control-bar">
+            <div id="controls">
+                <button id="record-stop-btn">Record</button>
+                <button id=play-pause-btn>Play/Pause</button>
+            </div>
+            <div id="timer">
+                <output id="time" for="time-scroll">00:00 / 00:00</output>
+                <input id="time-scroll" type="range" value="0" >
+            </div>
+        </div>
 </body>
     <script src="main.js"></script>
     </html>

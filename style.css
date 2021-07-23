@@ -1,61 +1,99 @@
-
-body{
-    padding: 0px;
-    margin: 0px;
-    position: fixed;
-    width: 100vw;
-    height: 100vh;
-    display: grid;
-    grid-template-rows: auto 60px;
-    grid-template-columns: 350px auto;
+* {
+  box-sizing: content-box;
+  padding: 0px;
+  margin: 0px;
+}
+html {
+  height: 100vh;
 }
 
-#file-manager{
-    overflow-y: scroll;
-    grid-row: 1;
-    grid-column: 1;
-    background-color: rgba(37, 37, 37, 0.911);
-}
-#file-manager ul {
-    padding: 5px;
-    list-style-type: none;
+body {
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 50px;
+  grid-template-columns: minmax(110px, 22vw) auto;
 }
 
-#file-manager li {
-    background-color: rgba(255, 250, 250, 0.164);
-    height: 35px;
-    color: white;
-    padding: 5px;
-    border-radius: 5px;
-    margin: 5px;
+.file-container {
+  overflow-y: scroll;
+  grid-row: 1;
+  grid-column: 1;
+  background-color: rgba(37, 37, 37, 0.911);
 }
-li:hover{
-    box-shadow: wheat;
-    opacity: 65%;
+#file-list {
+  list-style-type: none;
+  padding: 10px;
 }
-
-#waveforms{
-    width: 100%;
-    height: 100%;
-    grid-row: 1;
-    grid-column: 2;
-}
-#control-bar{
-    background-color: rgba(0, 0, 0, 0.87);
-    width: 100vw;
-    display: grid;
-    grid-template-columns: 332px auto;
-    align-items: center;
+.file{
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 5px;
+  align-items: center;
 }
 
-#controls{
-    text-align: center;
+.file-details{
+  width: 100%;
+  height: 30px;
+  margin-right: 10px;
+  padding: 2px;
+  background-color: rgb(75, 74, 74);
+  color: white;
+  border-style: solid;
+  border-width: 1px 0px 0px 1px;
+  border-color: rgb(161, 161, 161);
+  border-radius: 5px;
+  
 }
-#timer{
-    text-align: center;
-    color: white;
-    padding: 0px 10px;
+
+.file-details:hover {
+  background-color: rgba(102, 102, 102, 0.986);
 }
-#timer-scroll{
-    width: 98%
+.file-details.selected{
+  border-width: 0px 1px 1px 0pc;
+}
+.delete-btn{
+  color: white;
+  width: 25px;
+  height: 25px;
+  background-color: rgb(185, 26, 26);
+  border-radius: 5px;
+}
+.delete-btn:hover{
+  background-color: rgb(255, 51, 51);
+}
+
+#waveforms {
+  display: grid;
+  align-content: center;
+  grid-template-columns: 1fr 1fr;
+  grid-row: 1;
+  grid-column: 2;
+}
+#waveforms canvas {
+  width: 100%;
+  height: auto;
+}
+
+#control-bar {
+  background-color: rgba(0, 0, 0, 0.87);
+  grid-row: 2;
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: minmax(110px, 22vw) auto;
+}
+
+#controls {
+  grid-column: 1;
+  align-self: center;
+  text-align: center;
+}
+#timer {
+  padding: 5px 15px;
+  grid-column: 2;
+  align-self: center;
+  text-align: center;
+  color: white;
+}
+#time-scroll {
+  width: 100%;
 }
