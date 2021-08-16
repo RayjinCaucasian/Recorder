@@ -6,23 +6,28 @@
 html {
   height: 100vh;
 }
-
 body {
   height: 100%;
   display: grid;
   grid-template-rows: auto 50px;
   grid-template-columns: minmax(110px, 22vw) auto;
 }
-
-.file-container {
-  overflow-y: scroll;
+#file-manager{
   grid-row: 1;
-  grid-column: 1;
-  background-color: rgba(37, 37, 37, 0.911);
+  grid-column: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(0, 0, 0, 0.87);
+}
+#file-container {
+  height: 100%;
 }
 #file-list {
+  padding: 0px 5px;
+  height: inherit;
   list-style-type: none;
-  padding: 10px;
+  overflow-y: scroll;
+  background-color: rgba(37, 37, 37, 0.911);
 }
 .file{
   display: flex;
@@ -30,12 +35,11 @@ body {
   margin-bottom: 5px;
   align-items: center;
 }
-
 .file-details{
   width: 100%;
-  height: 30px;
-  margin-right: 10px;
-  padding: 2px;
+  height: auto;
+  margin-right: 5px;
+  padding: 2px 5px;
   background-color: rgb(75, 74, 74);
   color: white;
   border-style: solid;
@@ -44,24 +48,23 @@ body {
   border-radius: 5px;
   
 }
-
 .file-details:hover {
   background-color: rgba(102, 102, 102, 0.986);
 }
 .file-details.selected{
-  border-width: 0px 1px 1px 0pc;
+  border-width: 0px 1px 1px 0px;
 }
-.delete-btn{
-  color: white;
-  width: 25px;
-  height: 25px;
-  background-color: rgb(185, 26, 26);
-  border-radius: 5px;
+#file-options{
+  padding: 5px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
-.delete-btn:hover{
-  background-color: rgb(255, 51, 51);
+.options-btn{
+  margin: 2px;
+  height: 20px;
+  width: 100%;
 }
-
 #waveforms {
   display: grid;
   align-content: center;
@@ -73,7 +76,6 @@ body {
   width: 100%;
   height: auto;
 }
-
 #control-bar {
   background-color: rgba(0, 0, 0, 0.87);
   grid-row: 2;
@@ -81,11 +83,13 @@ body {
   display: grid;
   grid-template-columns: minmax(110px, 22vw) auto;
 }
-
 #controls {
   grid-column: 1;
   align-self: center;
   text-align: center;
+}
+#controls button{
+  padding: 2px;
 }
 #timer {
   padding: 5px 15px;

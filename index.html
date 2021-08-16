@@ -10,42 +10,42 @@
 </head>
 
 <body>
-        <div class="file-container">
+    <div id='file-manager'>
+        <div id="file-options">
+            <button class="options-btn">Get</button>
+            <button class="options-btn">Post</button>
+            <button class="options-btn">Delete</button>
+        </div>
+        <div id="file-container">
             <ul id="file-list">
-                <li class="file">
-                    <div class="file-details" onclick="selectFile(this.parentNode)">hello</div>
-                    <button class="delete-btn" onclick="removeFile(this.parentNode)">x</button>                  
-                </li>
-                <li class="file">
-                    <div class="file-details" onclick="selectFile(this.parentNode)">hello</div>
-                    <button class="delete-btn" onclick="removeFile(this.parentNode)">x</button>                  
-                </li>
-                <li class="file">
-                    <div class="file-details" onclick="selectFile(this.parentNode)">hello</div>
-                    <button class="delete-btn" onclick="removeFile(this.parentNode)">x</button>                  
-                </li>
-                <li class="file">
-                    <div class="file-details" onclick="selectFile(this.parentNode)">hello</div>
-                    <button class="delete-btn" onclick="removeFile(this.parentNode)">x</button>                  
+                </li><li class="file">
+                    <div class="file-details" onclick="selectFile(this.parentNode)">
+                        <dl>
+                            <dd>Name: </dd>
+                            <dt>created on:</dt>
+                        </dl>
+                    </div>
+                    <input type="checkbox">                
                 </li>
             </ul>
         </div>
-        <div id="waveforms">
-            <canvas></canvas>
-            <canvas></canvas>
-            <canvas></canvas>
-            <canvas></canvas>
+    </div>
+    <div id="waveforms">
+        <canvas></canvas>
+        <canvas></canvas>
+        <canvas></canvas>
+        <canvas></canvas>
+    </div>
+    <div id="control-bar">
+        <div id="controls">
+            <button id="record-stop-btn">Record / Stop</button>
+            <button id=play-pause-btn>Play / Pause</button>
         </div>
-        <div id="control-bar">
-            <div id="controls">
-                <button id="record-stop-btn">Record</button>
-                <button id=play-pause-btn>Play/Pause</button>
-            </div>
-            <div id="timer">
-                <output id="time" for="time-scroll">00:00 / 00:00</output>
-                <input id="time-scroll" type="range" value="0" >
-            </div>
+        <div id="timer">
+            <output id="time" for="time-scroll">00:00 / 00:00</output>
+            <input id="time-scroll" type="range" value="0" >
         </div>
+    </div>
 </body>
     <script src="main.js"></script>
     </html>

@@ -9,7 +9,8 @@
 
 
 class AudioFile {
-    constructor(name, audioData, date,) {
+    //the AudioFile is used to encpasulte an audio file with other useful information
+    constructor(name, audioData, date) {
         this.name = name;
         this.audioData = audioData;
         this.createdOn = date;
@@ -19,12 +20,11 @@ class AudioFile {
     hasEvent(){
         return this.eventLocation ? true : false;
     }
-    
 }
-
 class FileView{
+    //The FileView is used as view control for adding, removing and manipulation of the html and css
     constructor(){
-        this.filetemplate = ``;
+        this.fileList = document.getElementById('file-list');
     }
     changeSelectedState(fileContainer){
         const selectorClasses = fileContainer.children[0].classList;
@@ -34,31 +34,36 @@ class FileView{
             selectorClasses.add('selected')
        }
     }
-    addFile(){
-        return 0;
+    addFile(audioFile){
+        const fileTemplate = 
+            `<div class="file-details" onclick="selectFile(this.parentNode)">
+                <dl>
+                    <dd>Name:<br>${audioFile.name}</dd>
+                    <br>
+                    <dt>created on:<br>${audioFile.createdOn}</dt>
+                </dl>
+            </div>
+            <input type="checkbox">`;
+        const li = document.createElement('li');
+        li.classList = "file";
+        li.innerHTML = fileTemplate;
+        this.fileList.appendChild(li);
     }
-    removeFile(container){
+    deleteFiles(container){
         const fileContainer = container
         container.remove()
         return fileContainer;
     }
 }    
-    
-        
 class FileManager{
+    //the FileManager is used to define the functionality of file usage. 
     constructor(){
         this.fileView = new FileView();
         this.fileList = new Map();
         this.selectedFile = null;
     }
     addFile(file){
-        console.log(`inside addFile() ${file}`);
-    }
-    removeFile(elem){
-        if(this.selectedFile === elem){
-            this.selectedFile = null;
-        }
-        this.fileView.removeFile(elem);
+        this.fileView.addFile(file);
     }
     selectFile(elem){
         const changeViewState = this.fileView.changeSelectedState;
@@ -74,15 +79,46 @@ class FileManager{
             changeViewState(this.selectedFile);
         }
     }
-    uploadFile(){
+    getFiles(){
     }
-    downloadFiles(){
+    postFiles(){
+    }
+    deleteFiles(){
+    }
+}
+class AudioController{
+    constructor(){
+    }
+    startRecording(){
+    }
+    stopRecording(){
+    }
+    playAudio(){
+    }
+    pauseAudio(){
+    }
+    seek(){
     }
 }
 
-
-
 const files = new FileManager();
-
+const file = new AudioFile('test-file-name', 10111010, Date());
+const date = Date.now()
 selectFile = (elem) => {files.selectFile(elem); console.log(files.selectedFile)};
-removeFile = (elem) => files.removeFile(elem)
+deleteFiles = (elem) => files.deleteFiles(elem)
+files.addFile(file)
+
+
+
+//user interface
+/////////////////////////////////////////////////////
+//FILE MANAGEMENT//
+//selectFile() - select file for playback
+//deleteFile() - deletes file
+//pushFiles() - pushes file to database if not already added
+//pullFiles() - pulls files from database loads into browser
+//startRecording() - starts audio recording
+//stopRecording() - stops audio recording
+//playAudio()
+//pauseAudio()
+//seekControl() - range bar for scanning through audio file timeframe? 
