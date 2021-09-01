@@ -1,0 +1,85 @@
+* {
+  box-sizing: content-box;
+  padding: 0px;
+  margin: 0px;
+}
+:root {
+  --file-manager-width: 200px;
+  --controls-height: 38px;
+  --controls-background: rgb(44, 44, 44);
+}
+body {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: var(--file-manager-width) minmax(0px, 1fr);
+  grid-template-rows:
+    [row1-start] minmax(0px, 1fr)
+    [row1-end row2-start] auto
+    [row2-end];
+  grid-template-areas:
+    "files  display"
+    "audio audio";
+}
+
+#file-manager {
+  grid-area: files;
+  display: flex;
+  flex-direction: column;
+}
+#file-list {
+  background-color: rgb(73, 73, 73);
+  flex: 1;
+  overflow-y: scroll;
+}
+.file {
+  padding: 4px;
+  display: flex;
+  margin: 4px 4px 0px 4px;
+  border-radius: 4px;
+  background-color: var(--controls-background);
+  color: white;
+}
+.file label {
+  flex: 1;
+  padding: 4px;
+  display: inline-block;
+  overflow-wrap: break-word;
+  background-color: rgb(100, 100, 100);
+  border-radius: inherit;
+  user-select: none;
+}
+.file label.selected {
+  background-color: rgb(90, 90, 90);
+}
+.file input[type="checkbox"] {
+  align-self: center;
+  width: 30px;
+}
+
+#display {
+  background-color: cadetblue;
+  grid-area: display;
+  width: 100%;
+  height: 100%;
+}
+#audio-interface {
+  grid-area: audio;
+  display: grid;
+  grid-template-columns: var(--file-manager-width) 1fr;
+}
+.controls {
+  display: flex;
+  height: var(--controls-height);
+  color: rgb(134, 134, 134);
+  background-color: var(--controls-background);
+  justify-content: space-evenly;
+  align-items: center;
+}
+input[type="button"] {
+  padding: 4px;
+}
+input[type="range"] {
+  flex: 0.95;
+}
