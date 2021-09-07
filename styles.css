@@ -42,6 +42,7 @@ body {
   color: white;
 }
 .file label {
+  width: 100%;
   flex: 1;
   padding: 4px;
   display: inline-block;
@@ -51,7 +52,7 @@ body {
   user-select: none;
 }
 .file label.selected {
-  background-color: rgb(90, 90, 90);
+  background-color: rgb(68, 68, 68);
 }
 .file input[type="checkbox"] {
   align-self: center;
