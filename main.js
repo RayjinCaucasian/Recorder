@@ -3,6 +3,7 @@ const files = new Map();//key: DOMNode, value AudioFile
 let stream;
 let recorder;
 let selectedFile;//Dom File Node, key for files map
+const fileView = document.getElementById("file-list");
 
 //init MediaStream
 async function initStream() {
@@ -40,7 +41,7 @@ async function initRecorder() {
 //create AudioFile instance add file to Map and asscociated container to DOM 
 function addFile(file) {
     files.set(file._template, file);
-    document.getElementById("file-list").appendChild(file.getTemplate());
+    fileView.appendChild(file.getTemplate());
 }
 class AudioFile {
     constructor(name, data, createdOn) {
