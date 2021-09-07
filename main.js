@@ -1,27 +1,28 @@
 const ctx = new AudioContext({ latencyHint: "interactive", sampleRate: 48000 });
+const files = new Map();//key: DOMNode, value AudioFile
 let stream;
 let recorder;
-const files = [];
+let selectedFile;//Dom File Node, key for files map
 
 //init MediaStream
 async function initStream() {
-    if (!this._stream) {
+    if (!stream) {
         try {
-            this._stream = await navigator.mediaDevices.getUserMedia({
+            stream = await navigator.mediaDevices.getUserMedia({
                 audio: true,
             });
         } catch (e) {
             throw e;
         }
     }
-    return this._stream;
+    return stream;
 }
-//init MediaRecorder with Stream dependecy if needed
+//init MediaRecorder with MediaStream with initStream() if not set. set recorder event handlers
 async function initRecorder() {
     let blob = {};
-    if (!this._recorder) {
+    if (!recorder) {
         try {
-            recorder = new MediaRecorder(await this.initStream());
+            recorder = new MediaRecorder(await initStream());
         } catch (e) {
             throw e;
         }
@@ -30,21 +31,58 @@ async function initRecorder() {
             blob = e.data;
         };
         recorder.onstop = () => {
-            files.push(new AudioFile("hello", blob, Date.now()));
-            blob = {};
+            let file = new AudioFile("hello", blob, Date.now())
+            addFile(file);
+            selectPlaybackFile(file.getTemplate())
         };
     }
 }
-
+//create AudioFile instance add file to Map and asscociated container to DOM 
+function addFile(file) {
+    files.set(file._template, file);
+    document.getElementById("file-list").appendChild(file.getTemplate());
+}
 class AudioFile {
     constructor(name, data, createdOn) {
+        this._template = generateFileTemplate(name);
         this._name = name;
         this._data = data;
         this._createdOn = createdOn;
     }
+    getTemplate() {
+        return this._template;
+    }
+    getTemplateLabel(){
+        return this._template.children[0];
+    }
+    changeName(newName){
+        this.getTemplateLabel().innerText = `Name:\n${newName}`
+    }
+}
+//generate Audio File DOM element
+function generateFileTemplate(fileName) {
+    let file = document.createElement("li");
+    file.className = "file";
+    file.innerHTML = `<label for="${fileName}">Name:<br />${fileName}</label>
+          <input id="${fileName}" type="checkbox" />`;
+    return file;
+}
+//select file element for playback
+function selectPlaybackFile(fileContainer) {
+    if (!selectedFile) {
+        selectedFile = fileContainer;
+        fileContainer.children[0].classList.add("selected");
+    } else if (selectedFile !== fileContainer) {
+        selectedFile.children[0].classList.remove("selected");
+        fileContainer.children[0].classList.add("selected");
+        selectedFile = fileContainer;
+    } else {
+        selectedFile.children[0].classList.remove("selected");
+        selectedFile = undefined;
+    }
 }
 
-//Record
+//Record Event
 const recordBtn = document.getElementById("record-btn");
 recordBtn.addEventListener("click", onRecord);
 
@@ -59,18 +97,19 @@ async function onRecord() {
     if (recorder.state === "inactive") {
         recorder.start();
         recordBtn.style.backgroundColor = "red";
-    }else{
+    } else {
         recorder.stop();
         recordBtn.style.backgroundColor = "";
     }
 }
 
-//file selection
+//playback file selection event
 document.addEventListener("click", onFileSelect);
 
 function onFileSelect(event) {
     let target = event.target;
     if (target.parentNode.className === "file" && target.nodeName === "LABEL") {
         event.preventDefault();
+        selectPlaybackFile(target.parentNode);
     }
 }
