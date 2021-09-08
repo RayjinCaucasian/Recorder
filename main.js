@@ -1,9 +1,11 @@
 const ctx = new AudioContext({ latencyHint: "interactive", sampleRate: 48000 });
+//let destintion = ctx.createMediaStreamDestination();
 const files = new Map();//key: DOMNode, value AudioFile
 let stream;
 let recorder;
 let selectedFile;//Dom File Node, key for files map
 const fileView = document.getElementById("file-list");
+const playBtn = document.getElementById('playback-btn');
 
 //init MediaStream
 async function initStream() {
@@ -113,4 +115,27 @@ function onFileSelect(event) {
         event.preventDefault();
         selectPlaybackFile(target.parentNode);
     }
+}
+playBtn.addEventListener('click', onPlay);
+async function onPlay(){
+    if(!selectedFile){
+        alert("No File selected for playback");
+        return;
+    }
+    let blob = files.get(selectedFile)._data;
+    console.log(blob)
+    //let audio = document.createElement('audio');
+    //audio.src = window.URL.createObjectURL(blob);
+    let buffer;
+    try{
+     buffer = await ctx.decodeAudioData(await blob.arrayBuffer());
+    }catch(e){
+        
+    }
+    console.log(buffer)
+    let src = ctx.createBufferSource();
+    console.log(src)
+    src.buffer = buffer
+    src.connect(ctx.destination);
+    src.start();
 }
