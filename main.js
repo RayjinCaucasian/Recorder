@@ -1,5 +1,18 @@
+////////AudioCtx
 const ctx = new AudioContext({ latencyHint: "interactive", sampleRate: 48000 });
-//let destintion = ctx.createMediaStreamDestination();
+const analyser = ctx.createAnalyser();
+analyser.fftSize = 2048;
+const bufferLength = analyser.frequencyBinCount;
+const dataArray = new Uint8Array(bufferLength);
+analyser.getByteTimeDomainData(dataArray);
+analyser.connect(ctx.destination);
+///////////////////////////////////////////////////////
+
+///////Canvas
+const canvas = document.getElementById('display');
+const canvasCtx = canvas.getContext('2d');
+draw();
+///////////////////////////////////////////////////////
 const files = new Map();//key: DOMNode, value AudioFile
 let stream;
 let recorder;
@@ -116,26 +129,55 @@ function onFileSelect(event) {
         selectPlaybackFile(target.parentNode);
     }
 }
+
+//playback, get selectedFiles data Blob, create buffer from blob, connect to ctx destination
 playBtn.addEventListener('click', onPlay);
 async function onPlay(){
     if(!selectedFile){
         alert("No File selected for playback");
         return;
     }
-    let blob = files.get(selectedFile)._data;
-    console.log(blob)
-    //let audio = document.createElement('audio');
-    //audio.src = window.URL.createObjectURL(blob);
-    let buffer;
-    try{
-     buffer = await ctx.decodeAudioData(await blob.arrayBuffer());
-    }catch(e){
-        
-    }
-    console.log(buffer)
-    let src = ctx.createBufferSource();
-    console.log(src)
-    src.buffer = buffer
-    src.connect(ctx.destination);
+    let src = await createBuffer(files.get(selectedFile)._data);
+    src.connect(analyser);
     src.start();
 }
+
+
+
+//draw waveform/bargraph to canvas
+function draw(){
+    requestAnimationFrame(draw);
+    analyser.getByteTimeDomainData(dataArray);
+
+    canvasCtx.fillStyle = "rgb(95,160,160)";
+    canvasCtx.fillRect(0,0, canvas.width, canvas.height);
+    canvasCtx.lineWidth = 2;
+    canvasCtx.strokeStyle = "rgb(0,0,0)";
+    canvasCtx.beginPath();
+    const sliceWidth = canvas.width * 1.0 / bufferLength;
+    let x = 0;
+    for(let i = 0; i < bufferLength; i++){
+        let v = dataArray[i] /  128.0;
+        let y = v * canvas.height / 2;
+        if(i === 0){
+            canvasCtx.moveTo(x,y);
+        } else {
+            canvasCtx.lineTo(x,y);
+        }
+        x += sliceWidth;
+    }
+    canvasCtx.lineTo(canvas.width, canvas.height / 2);
+    canvasCtx.stroke();
+}
+async function createBuffer(selectedFile){
+    let buffer;
+    try{
+        buffer = await ctx.decodeAudioData(await selectedFile.arrayBuffer());
+        let src = ctx.createBufferSource();
+        src.buffer = buffer
+        return src;
+    }catch(e){
+        console.log(e)
+    }
+}
+
