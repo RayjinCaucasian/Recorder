@@ -71,6 +71,7 @@ body {
   grid-template-columns: var(--file-manager-width) 1fr;
 }
 .controls {
+  padding: 0px 2px;
   display: flex;
   height: var(--controls-height);
   color: rgb(134, 134, 134);
@@ -79,7 +80,8 @@ body {
   align-items: center;
 }
 input[type="button"] {
-  padding: 4px;
+  margin: 2px;
+  padding: 4px 8px;
 }
 input[type="range"] {
   flex: 0.95;

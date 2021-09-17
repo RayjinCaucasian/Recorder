@@ -11,14 +11,16 @@ analyser.connect(ctx.destination);
 ///////Canvas
 const canvas = document.getElementById('display');
 const canvasCtx = canvas.getContext('2d');
-draw();
 ///////////////////////////////////////////////////////
-const files = new Map();//key: DOMNode, value AudioFile
+
+//////Media
+const files = new Map();//key: DOMNode, value: AudioFile
 let stream;
 let recorder;
 let selectedFile;//Dom File Node, key for files map
 const fileView = document.getElementById("file-list");
 const playBtn = document.getElementById('playback-btn');
+/////////////////////////////////////////////////////////
 
 //init MediaStream
 async function initStream() {
@@ -53,11 +55,12 @@ async function initRecorder() {
         };
     }
 }
-//create AudioFile instance add file to Map and asscociated container to DOM 
+//cAdd file to Map and asscociated container to DOM 
 function addFile(file) {
     files.set(file._template, file);
     fileView.appendChild(file.getTemplate());
 }
+//AudioFile contains Audio data and metadata
 class AudioFile {
     constructor(name, data, createdOn) {
         this._template = generateFileTemplate(name);
@@ -97,6 +100,7 @@ function selectPlaybackFile(fileContainer) {
         selectedFile = undefined;
     }
 }
+///////Interface Events
 
 //Record Event
 const recordBtn = document.getElementById("record-btn");
@@ -142,9 +146,38 @@ async function onPlay(){
     src.start();
 }
 
+//delete event
+const deleteBtn = document.getElementById('delete-btn');
+deleteBtn.addEventListener('click', onDelete)
+
+function onDelete(){
+    let filesList = [...fileView.children];
+    for(let file of filesList){
+        if(file.children[1].checked){
+            if(selectedFile === file){
+               selectedFile = undefined;
+            }
+            files.delete(file)
+            file.remove();
+        }
+    }
+    selectAllBtn.dataset.selectAll = false;
+}
+
+//select all event
+const selectAllBtn = document.getElementById('check-all-btn');
+selectAllBtn.addEventListener('click', onSelectAll)
+function onSelectAll(){
+    let select = selectAllBtn.dataset.selectAll == "false"? true: false;
+    for(let file of fileView.children){
+        file.children[1].checked = select;
+    }
+    selectAllBtn.dataset.selectAll = select;
+}
+//////////////////////////////////////////////
 
 
-//draw waveform/bargraph to canvas
+//draw waveform to canvas
 function draw(){
     requestAnimationFrame(draw);
     analyser.getByteTimeDomainData(dataArray);
@@ -152,12 +185,12 @@ function draw(){
     canvasCtx.fillStyle = "rgb(95,160,160)";
     canvasCtx.fillRect(0,0, canvas.width, canvas.height);
     canvasCtx.lineWidth = 2;
-    canvasCtx.strokeStyle = "rgb(0,0,0)";
+    canvasCtx.strokeStyle = "rgb(255,255,255)";
     canvasCtx.beginPath();
     const sliceWidth = canvas.width * 1.0 / bufferLength;
     let x = 0;
     for(let i = 0; i < bufferLength; i++){
-        let v = dataArray[i] /  128.0;
+        let v = dataArray[i] /  128;
         let y = v * canvas.height / 2;
         if(i === 0){
             canvasCtx.moveTo(x,y);
@@ -180,4 +213,4 @@ async function createBuffer(selectedFile){
         console.log(e)
     }
 }
-
+draw();
