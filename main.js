@@ -1,26 +1,23 @@
 ////////AudioCtx
-const ctx = new AudioContext({ latencyHint: "interactive", sampleRate: 48000 });
-const analyser = ctx.createAnalyser();
-analyser.fftSize = 2048;
-const bufferLength = analyser.frequencyBinCount;
-const dataArray = new Uint8Array(bufferLength);
-analyser.getByteTimeDomainData(dataArray);
-analyser.connect(ctx.destination);
-///////////////////////////////////////////////////////
 
-///////Canvas
-const canvas = document.getElementById('display');
-const canvasCtx = canvas.getContext('2d');
+//init Audio Context
+const audioCtx = new AudioContext({
+    latencyHint: "interactive",
+    sampleRate: 48000,
+});
+
+//setup analyser node
+const analyser = audioCtx.createAnalyser();
+analyser.fftSize = 2048;
+analyser.connect(audioCtx.destination);
 ///////////////////////////////////////////////////////
 
 //////Media
-const files = new Map();//key: DOMNode, value: AudioFile
-let stream;
-let recorder;
-let selectedFile;//Dom File Node, key for files map
+const files = new Map(); //key: DOMNode, value: AudioFile
+let stream = undefined;
+let recorder = undefined;
+let selectedFile = undefined; //Dom File Node, key for files map
 const fileView = document.getElementById("file-list");
-const playBtn = document.getElementById('playback-btn');
-/////////////////////////////////////////////////////////
 
 //init MediaStream
 async function initStream() {
@@ -49,13 +46,13 @@ async function initRecorder() {
             blob = e.data;
         };
         recorder.onstop = () => {
-            let file = new AudioFile("hello", blob, Date.now())
+            let file = new AudioFile("hello", blob, Date.now());
             addFile(file);
-            selectPlaybackFile(file.getTemplate())
+            selectPlaybackFile(file.getTemplate());
         };
     }
 }
-//cAdd file to Map and asscociated container to DOM 
+//Add file to Map and asscociated container to DOM
 function addFile(file) {
     files.set(file._template, file);
     fileView.appendChild(file.getTemplate());
@@ -71,11 +68,11 @@ class AudioFile {
     getTemplate() {
         return this._template;
     }
-    getTemplateLabel(){
+    getTemplateLabel() {
         return this._template.children[0];
     }
-    changeName(newName){
-        this.getTemplateLabel().innerText = `Name:\n${newName}`
+    changeName(newName) {
+        this.getTemplateLabel().innerText = `Name:\n${newName}`;
     }
 }
 //generate Audio File DOM element
@@ -100,6 +97,21 @@ function selectPlaybackFile(fileContainer) {
         selectedFile = undefined;
     }
 }
+
+//create audio buffer
+async function createBuffer(selectedFile) {
+    let src;
+    try {
+        const buffer = await audioCtx.decodeAudioData(
+            await selectedFile.arrayBuffer()
+        );
+        src = audioCtx.createBufferSource();
+        src.buffer = buffer;
+    } catch (e) {
+        console.log(e);
+    }
+    return src;
+}
 ///////Interface Events
 
 //Record Event
@@ -112,6 +124,7 @@ async function onRecord() {
             await initRecorder();
         } catch (e) {
             alert(`Access to microphone stopped: ${e.message}`);
+            return;
         }
     }
     if (recorder.state === "inactive") {
@@ -123,7 +136,7 @@ async function onRecord() {
     }
 }
 
-//playback file selection event
+//file selection event
 document.addEventListener("click", onFileSelect);
 
 function onFileSelect(event) {
@@ -134,10 +147,12 @@ function onFileSelect(event) {
     }
 }
 
-//playback, get selectedFiles data Blob, create buffer from blob, connect to ctx destination
-playBtn.addEventListener('click', onPlay);
-async function onPlay(){
-    if(!selectedFile){
+//playback, get selectedFiles data Blob, create buffer from blob, connect to audioCtx destination
+const playBtn = document.getElementById("playback-btn");
+playBtn.addEventListener("click", onPlay);
+
+async function onPlay() {
+    if (!selectedFile) {
         alert("No File selected for playback");
         return;
     }
@@ -147,17 +162,17 @@ async function onPlay(){
 }
 
 //delete event
-const deleteBtn = document.getElementById('delete-btn');
-deleteBtn.addEventListener('click', onDelete)
+const deleteBtn = document.getElementById("delete-btn");
+deleteBtn.addEventListener("click", onDelete);
 
-function onDelete(){
+function onDelete() {
     let filesList = [...fileView.children];
-    for(let file of filesList){
-        if(file.children[1].checked){
-            if(selectedFile === file){
-               selectedFile = undefined;
+    for (let file of filesList) {
+        if (file.children[1].checked) {
+            if (selectedFile === file) {
+                selectedFile = undefined;
             }
-            files.delete(file)
+            files.delete(file);
             file.remove();
         }
     }
@@ -165,52 +180,67 @@ function onDelete(){
 }
 
 //select all event
-const selectAllBtn = document.getElementById('check-all-btn');
-selectAllBtn.addEventListener('click', onSelectAll)
-function onSelectAll(){
-    let select = selectAllBtn.dataset.selectAll == "false"? true: false;
-    for(let file of fileView.children){
+const selectAllBtn = document.getElementById("check-all-btn");
+selectAllBtn.addEventListener("click", onSelectAll);
+
+function onSelectAll() {
+    let select = selectAllBtn.dataset.selectAll == "false" ? true : false;
+    for (let file of fileView.children) {
         file.children[1].checked = select;
     }
     selectAllBtn.dataset.selectAll = select;
 }
+
+//Get Event
+const getBtn = document.getElementById("get-btn");
+getBtn.addEventListener("click", onGet);
+
+async function onGet() {
+    console.log("get-btn pressed");
+}
+
+//Post event
+const postBtn = document.getElementById("post-btn");
+postBtn.addEventListener("click", onPost);
+
+async function onPost() {
+    console.log("post-btn pressed");
+}
 //////////////////////////////////////////////
 
+///////Canvas
+//get Canvas
+const canvas = document.getElementById("display");
+const canvasCtx = canvas.getContext("2d");
+
+//create buffer
+const bufferLength = analyser.frequencyBinCount;
+const dataArray = new Uint8Array(bufferLength);
 
 //draw waveform to canvas
-function draw(){
-    requestAnimationFrame(draw);
+function drawWave() {
+    requestAnimationFrame(drawWave);
     analyser.getByteTimeDomainData(dataArray);
-
-    canvasCtx.fillStyle = "rgb(95,160,160)";
-    canvasCtx.fillRect(0,0, canvas.width, canvas.height);
+    canvasCtx.fillStyle = "rgb(0,0,0)";
+    canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
     canvasCtx.lineWidth = 2;
     canvasCtx.strokeStyle = "rgb(255,255,255)";
     canvasCtx.beginPath();
-    const sliceWidth = canvas.width * 1.0 / bufferLength;
+    const sliceWidth = (canvas.width * 1.0) / bufferLength;
     let x = 0;
-    for(let i = 0; i < bufferLength; i++){
-        let v = dataArray[i] /  128;
-        let y = v * canvas.height / 2;
-        if(i === 0){
-            canvasCtx.moveTo(x,y);
+    for (let i = 0; i < bufferLength; i++) {
+        let v = dataArray[i] / 128;
+        let y = (v * canvas.height) / 2;
+        if (i === 0) {
+            canvasCtx.moveTo(x, y);
         } else {
-            canvasCtx.lineTo(x,y);
+            canvasCtx.lineTo(x, y);
         }
         x += sliceWidth;
     }
-    canvasCtx.lineTo(canvas.width, canvas.height / 2);
     canvasCtx.stroke();
 }
-async function createBuffer(selectedFile){
-    let buffer;
-    try{
-        buffer = await ctx.decodeAudioData(await selectedFile.arrayBuffer());
-        let src = ctx.createBufferSource();
-        src.buffer = buffer
-        return src;
-    }catch(e){
-        console.log(e)
-    }
-}
-draw();
+
+//call functions
+drawWave();
+initRecorder();
